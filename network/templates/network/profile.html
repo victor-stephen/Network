@@ -1,0 +1,70 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+<section class="h-100 gradient-custom-2">
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col">
+          <div class="card">
+            <div class="rounded-top text-white d-flex flex-row" style="background-color: #000; height:200px;">
+              <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px;">
+                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+                  alt="Generic placeholder image" class="img-fluid img-thumbnail mt-4 mb-2"
+                  style="width: 150px; z-index: 1">
+                  {% if profile.username != user.username %}
+                    {% if userfollowing %}
+                      <a href="{% url 'unfollow' profile_id=profile.id %}" class="btn btn-outline-dark" data-mdb-ripple-color="dark" style="z-index: 1;">Unfollow</a>
+                    {% else %}
+                      <a href="{% url 'follow' profile_id=profile.id %}" class="btn btn-outline-dark" data-mdb-ripple-color="dark" style="z-index: 1;">Follow</a>
+                    {% endif %}
+                  {% endif %}
+              </div>
+              <div class="ms-3" style="margin-top: 130px;">
+                <h5>{{ profile.username }}</h5>
+                <p>{{ profile.email }}</p>
+              </div>
+            </div>
+            <div class="p-4 text-black" style="background-color: #f8f9fa;">
+              <div class="d-flex justify-content-end text-center py-1">
+                <div>
+                  <p class="mb-1 h5">{{ num_posts }}</p>
+                  <p class="small text-muted mb-0">Posts</p>
+                </div>
+                <div class="px-3">
+                  <p class="mb-1 h5">{{ followers|length }}</p>
+                  <p class="small text-muted mb-0">Followers</p>
+                </div>
+                <div>
+                  <p class="mb-1 h5">{{ followings|length}}</p>
+                  <p class="small text-muted mb-0">Following</p>
+                </div>
+              </div>
+            </div>
+            <div class="card-body p-4 text-black">
+              <p class="lead fw-normal mb-1">Posts</p>
+                <div class="fs-7" id="post-view">
+                    {% for post in page_posts %}
+                        <div class="card mb-2" style="background-color: #f8f9fa;">
+                            <div class="card-body mb-3">
+                                <h6 class="card-subtitle mb-2 text-muted">{{ post.date }}</h6>
+                                <p class="card-text">{{ post.post }}</p>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+                                    <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/>
+                                </svg>
+                                Likes {{ post.like }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+{% block script %}
+    <script src="{% static 'network/inbox.js' %}"></script>
+{% endblock %}
