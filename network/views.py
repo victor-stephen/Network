@@ -37,11 +37,11 @@ def likepost(request, post_id):
         if post.likers.filter(id=user.id).exists():
             post.likers.remove(user)
             print("Unliked")
-            return HttpResponseRedirect(reverse("index"))
+            return JsonResponse({"Success": "Unliked post."}, status=200)
         else:
             post.likers.add(user)
             print("liked")
-            return HttpResponseRedirect(reverse("index"))
+            return JsonResponse({"Success": "Liked post."}, status=200)
 
 
 def following(request):

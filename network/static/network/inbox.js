@@ -56,3 +56,30 @@ function submitPost(e) {
     })
 };
 
+document.addEventListener("DOMContentLoaded", () =>{
+    document.querySelectorAll("[id^='likebutton']").forEach(button => {
+        button.onclick = function() {
+            let postid = button.id;
+            postid = postid.match(/\d+/g)[0];
+            likepost(postid);
+            
+        };
+    });
+
+    document.querySelectorAll("[id^='editbutton']").forEach(button => {
+        button.onclick = function() {
+            let postid = button.id;
+            postid = postid.match(/\d+/g)[0]
+            editPost(postid)
+        }
+    })
+})
+
+function likepost(postid) {
+    fetch(`/likePost/${postid}`)
+    .then(res => res.json())
+    .then((data) => {
+        window.location.reload();
+    })
+    
+}
