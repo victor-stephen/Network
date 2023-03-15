@@ -27,9 +27,22 @@ def index(request):
         "page_posts": page_posts,
     })
 
-# Sort post
-def sortfn(followingPosts):
-    return
+def likepost(request, post_id):
+    # Get the post to be liked or removed from liked
+    post = Post.objects.get(pk=post_id)
+
+    if request.user.is_authenticated:
+        # Get logged in user
+        user = request.user
+        if post.likers.filter(id=user.id).exists():
+            post.likers.remove(user)
+            print("Unliked")
+            return HttpResponseRedirect(reverse("index"))
+        else:
+            post.likers.add(user)
+            print("liked")
+            return HttpResponseRedirect(reverse("index"))
+
 
 def following(request):
     # Get the persons the user is following
@@ -138,21 +151,15 @@ def profile(request, profile_id):
 
     # Get the logged in user
     user = request.user
-    print(f"The logged in user is {user.username}")
-    print(f"The profile viewed is {profile.username}")
 
     # Profile posts
     profile_posts = Post.objects.filter(poster=profile).order_by("-date")
 
     # Persons the profile is following
     followings = [e for e in Follow.objects.filter(user=profile)]
-    print(f"The people {profile.username} is following are {followings}")
 
     # Profile's followers
     followers = profile.followers.all()
-    for follower in followers:
-
-        print(f"{profile.username} followers is {follower.user}")
 
     userfollowing = False
     for follower in followers:
@@ -190,19 +197,21 @@ def unfollow(request, profile_id):
     # Get profile to be unfollowed
     profile = User.objects.get(pk=profile_id)
 
-    # User who is unfollowing
+    # User who wants to unfollow
     user = request.user
 
-    # Get the profile followers
+    # Get the followers of the profile viewed
     followers = profile.followers.all()
 
     for follower in followers:
         if follower.user.username == user.username:
             follower.delete()
-    return HttpResponseRedirect(reverse('profile', kwargs={'profile_id': profile.id}))
+            return HttpResponseRedirect(reverse('profile', kwargs={'profile_id': profile.id}))
 
+@csrf_exempt
 @login_required
 def editpost(request, post_id):
+    print(post_id)
 
     # Editing an old post must be via POST
     if request.method != "POST":
@@ -214,6 +223,7 @@ def editpost(request, post_id):
     # Get the post to be edited
     oldPost = Post.objects.get(pk=post_id)
     oldPost.post = editedPost
+    oldPost.save()
 
     # Delete the previous post
     return JsonResponse(oldPost.serialize())
