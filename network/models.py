@@ -9,7 +9,7 @@ class Post(models.Model):
     poster = models.ForeignKey(User, on_delete=models.CASCADE, related_name="userPoster")
     post = models.CharField(max_length=100)
     date = models.DateTimeField(auto_now_add=True)
-    like = models.IntegerField(default='0')
+    likers = models.ManyToManyField(User, related_name="postliked")
 
     def serialize(self):
         return {
@@ -17,7 +17,6 @@ class Post(models.Model):
             "poster": self.poster.username,
             "post": self.post,
             "date": self.date.strftime("%b %d %Y, %I:%M %p"),
-            "like": self.like
         }
 
 class Follow(models.Model):
